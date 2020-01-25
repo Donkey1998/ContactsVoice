@@ -3,6 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:text="语音通讯录"
+        android:textSize="30sp"
+        android:gravity="center"
+        android:background="#3CDC78"
+        />
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

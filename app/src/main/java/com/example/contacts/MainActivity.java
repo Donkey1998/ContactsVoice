@@ -2,6 +2,7 @@ package com.example.contacts;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -13,11 +14,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,7 +36,7 @@ import com.iflytek.cloud.msc.util.log.DebugLog;
 import java.util.List;
 import java.util.Vector;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     private static String TAG = MainActivity.class.getSimpleName();
     private List<PhoneDto> phoneDtos;
@@ -118,7 +119,12 @@ public class MainActivity extends AppCompatActivity {
     //自定义适配器
     private class MyAdapter extends BaseAdapter {
 
-        @Override
+        private LayoutInflater mInflater;
+
+        public MyAdapter() {
+            mInflater = LayoutInflater.from(MainActivity.this);
+        }
+            @Override
         public int getCount() {
             return phoneDtos.size();
         }
@@ -137,20 +143,22 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             PhoneDto phoneDto = phoneDtos.get(position);
-            LinearLayout linearLayout = new LinearLayout(MainActivity.this);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0,LinearLayout.LayoutParams.WRAP_CONTENT);
-            layoutParams.weight = 1;
-            TextView tv_name = new TextView(MainActivity.this);
-            tv_name.setId(View.generateViewId());
-            tv_name.setLayoutParams(layoutParams);
-            tv_name.setText(phoneDto.getName());
-            TextView tv_num = new TextView(MainActivity.this);
-            tv_num.setId(View.generateViewId());
-            tv_num.setLayoutParams(layoutParams);
-            tv_num.setText(phoneDto.getTelPhone());
-            linearLayout.addView(tv_name);
-            linearLayout.addView(tv_num);
-            return linearLayout;
+            ViewHolder viewHolder = new ViewHolder();
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.list_item, null);
+                viewHolder.textName = convertView.findViewById(R.id.listview_name);
+                viewHolder.textTel = convertView.findViewById(R.id.listview_tel);
+                convertView.setTag(viewHolder);
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
+            }
+            viewHolder.textName.setText(phoneDto.getName());
+            viewHolder.textTel.setText(phoneDto.getTelPhone());
+            return convertView;
+        }
+        private final class ViewHolder {
+
+            TextView textName,textTel;
         }
     }
 
