@@ -70,8 +70,10 @@ public class MainActivity extends AppCompatActivity {
         lv_main_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //拨打电话
-                Intent intent =  new Intent(Intent.ACTION_DIAL,Uri.parse("tel:" + phoneDtos.get(position).getTelPhone()));
+//                //拨打电话
+//                Intent intent =  new Intent(Intent.ACTION_DIAL,Uri.parse("tel:" + phoneDtos.get(position).getTelPhone()));
+//                startActivity(intent);
+                Intent intent = new Intent(MainActivity.this, TtsDemo.class);
                 startActivity(intent);
             }
         });
