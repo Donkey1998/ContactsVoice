@@ -12,7 +12,6 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +32,10 @@ import com.iflytek.cloud.SpeechUtility;
 import com.iflytek.cloud.SynthesizerListener;
 import com.iflytek.cloud.msc.util.log.DebugLog;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 public class MainActivity extends Activity {
@@ -81,9 +83,42 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void initViews() {
+    private List<PhoneDto> getLetterGroup(){
         PhoneUtil phoneUtil = new PhoneUtil(this);
         phoneDtos = phoneUtil.getPhone();
+        Map<String, List<PhoneDto>> map = new HashMap<>();
+        for (PhoneDto item : phoneDtos) {
+            String str = PinYinUtils.getPinYin(item.getName().substring(0,1));
+            String key = str.substring(0,1);
+            if (map.containsKey(key)) {  //判断是否存在首字母的key
+                List <PhoneDto> list;
+                list = map.get(key);
+                list.add(item);
+                map.put(key,list);
+            }else {
+                List <PhoneDto> list = new ArrayList<>();
+                list.add(item);
+                map.put(key,list);
+            }
+            Log.e(TAG, item.getName());
+            Log.e(TAG, str);
+        }
+        phoneDtos.clear();
+        for(Map.Entry<String, List<PhoneDto>> entry : map.entrySet()){
+            String mapKey = entry.getKey();
+            List<PhoneDto> mapValue = entry.getValue();
+            for(PhoneDto item : mapValue){
+                phoneDtos.add(item);
+            }
+        }
+        return phoneDtos;
+    }
+
+
+    private void initViews() {
+//      获取首字母分组后的联系人list
+        phoneDtos = getLetterGroup();
+
         lv_main_list = (ListView) findViewById(R.id.lv_main_list);
         MyAdapter myAdapter = new MyAdapter();
         lv_main_list.setAdapter(myAdapter);
